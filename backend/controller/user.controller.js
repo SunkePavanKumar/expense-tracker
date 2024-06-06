@@ -75,6 +75,76 @@ const userController = {
       next(error);
     }
   },
+  // update or change password.
+
+  changePassword: async (req, res, next) => {
+    try {
+      const { newPassword } = req.body;
+      if (!newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide the new password",
+        });
+      }
+      const userId = req.user;
+      if (!userId) {
+        throw new Error("User Id not found");
+      }
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      user.password = newPassword;
+      await user.save();
+      res.status(200).json({
+        success: true,
+        message: "password updated successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  updateUserProfile: async (req, res, next) => {
+    try {
+      const { username, email } = req.body;
+      if (!username && !email) {
+        return res.status(400).json({
+          success: false,
+          message: "either email or username is missing",
+        });
+      }
+      const userId = req.user;
+      if (!userId) {
+        throw new Error("User Id not found");
+      }
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const updatedUser = await User.findOneAndUpdate(
+        {
+          _id: userId,
+        },
+
+        {
+          username,
+          email,
+        },
+        { new: true }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Username and Email updated successfully",
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default userController;
