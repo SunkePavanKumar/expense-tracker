@@ -5,7 +5,7 @@ import "dotenv/config";
 const JWT_SECRET = process.env.JWT_SECRET;
 const userController = {
   // register
-  register: async (req, res) => {
+  register: async (req, res, next) => {
     try {
       const { username, email, password } = req.body;
 
@@ -29,10 +29,10 @@ const userController = {
         message: "User Created Successfully",
       });
     } catch (error) {
-      console.error(`Error while registering the user, Error::: ${error}`);
+      next(error);
     }
   },
-  login: async (req, res) => {
+  login: async (req, res, next) => {
     try {
       let { email, password } = req.body;
       let user = await User.findOne({ email });
@@ -52,7 +52,27 @@ const userController = {
 
       res.status(200).json({ message: "Login successful", token });
     } catch (error) {
-      console.log(`Error while registering the user`, error);
+      next(error);
+    }
+  },
+  // get the profile details
+  profile: async (req, res) => {
+    try {
+      const userId = req.user;
+      if (!userId) {
+        throw new Error("User Id not found");
+      }
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      res.status(200).json({
+        success: true,
+        message: "fetched the user profile details successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
     }
   },
 };

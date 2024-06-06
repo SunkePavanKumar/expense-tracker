@@ -2,11 +2,12 @@ import express from "express";
 import userRouter from "./routes/user.router.js";
 import mongoose from "mongoose";
 import "dotenv/config";
+import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 app.use(express.json());
-app.use("/api/v1", userRouter);
+app.use("/api/v1", userRouter, errorHandler);
 
 (async function () {
   try {
