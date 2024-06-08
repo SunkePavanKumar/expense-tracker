@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./routes/user.router.js";
 import categoryRouter from "./routes/category.router.js";
+import transactionRouter from "./routes/transaction.router.js";
 import mongoose from "mongoose";
 import "dotenv/config";
 import errorHandler from "./middleware/errorHandler.js";
@@ -10,6 +11,7 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use(express.json());
 app.use("/api/v1", userRouter, errorHandler);
 app.use("/api/v1", categoryRouter, errorHandler);
+app.use("/api/v1", transactionRouter, errorHandler);
 
 (async function () {
   try {
