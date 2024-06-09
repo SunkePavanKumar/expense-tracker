@@ -34,6 +34,16 @@ const transactionController = {
   },
   lists: async (req, res, next) => {
     try {
+      const { startDate, endDate, type, category } = req.query;
+      let filter = {user : req.user};
+      if(startDate){
+        filter.date = {...filter, $gte : new Date(startDate)}
+      }
+      if(endDate){
+        filter.date = {...filter, $lte : new Date(endDate)}
+      }
+     
+
       const transactions = await Transaction.find({
         user: req.user,
       });
